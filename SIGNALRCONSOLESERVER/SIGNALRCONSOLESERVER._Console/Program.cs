@@ -4,6 +4,7 @@ using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
 using Owin;
 using System;
+using System.Threading.Tasks;
 
 namespace SIGNALRCONSOLESERVER._Console
 {
@@ -42,6 +43,47 @@ namespace SIGNALRCONSOLESERVER._Console
         public void DoSomething(string param)
         {
             Clients.All.addMessage(param);
+        }
+
+        public override Task OnConnected()
+        {
+            // Add your own code here.
+            // For example: in a chat application, record the association between
+            // the current connection ID and user name, and mark the user as online.
+            // After the code in this method completes, the client is informed that
+            // the connection is established; for example, in a JavaScript client,
+            // the start().done callback is executed.
+
+            string clientConnectionId = Context.ConnectionId;
+            Console.WriteLine("client connected with " + clientConnectionId + " connectionId");
+            return base.OnConnected();
+        }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            // Add your own code here.
+            // For example: in a chat application, mark the user as offline, 
+            // delete the association between the current connection id and user name.
+
+            if (stopCalled)
+            {
+                Console.WriteLine(String.Format("Client {0} explicitly closed the connection.", Context.ConnectionId));
+            }
+            else
+            {
+                Console.WriteLine(String.Format("Client {0} timed out .", Context.ConnectionId));
+            }
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnReconnected()
+        {
+            Console.WriteLine(Context.ConnectionId + " reconnected.");
+            // Add your own code here.
+            // For example: in a chat application, you might have marked the
+            // user as offline after a period of inactivity; in that case 
+            // mark the user as online again.
+            return base.OnReconnected();
         }
     }
 }
