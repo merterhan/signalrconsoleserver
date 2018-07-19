@@ -29,7 +29,12 @@ namespace SIGNALRCONSOLESERVER._Console
         public void Configuration(IAppBuilder app)
         {
             app.UseCors(CorsOptions.AllowAll);
-            app.MapSignalR();
+
+            //Sending detailed error messages to clients in production is not recommended for security reasons, but if you want to enable detailed error messages for troubleshooting purposes, use the following code on the server.
+            var hubConfiguration = new HubConfiguration();
+            hubConfiguration.EnableDetailedErrors = true;
+
+            app.MapSignalR(hubConfiguration);
         }
     }
     [HubName("MyHub")]
